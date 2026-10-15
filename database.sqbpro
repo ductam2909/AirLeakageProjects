@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="database.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="2836"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="history" custom_title="0" dock_id="1" table="4,7:mainhistory"/><dock_state state="000000ff00000000fd0000000100000002000004e600000381fc0100000001fb000000160064006f0063006b00420072006f00770073006500310100000000000004e60000013900ffffff000002580000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="history" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="288"/><column index="2" value="85"/><column index="3" value="88"/><column index="4" value="156"/><column index="5" value="156"/><column index="6" value="79"/><column index="7" value="55"/><column index="8" value="91"/><column index="9" value="68"/><column index="10" value="57"/><column index="11" value="103"/><column index="12" value="300"/><column index="13" value="300"/><column index="14" value="43"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">WITH RECURSIVE cnt(x) AS (
+    SELECT 1
+    UNION ALL
+    SELECT x + 1
+    FROM cnt
+    WHERE x &lt; 10000
+)
+INSERT INTO history (
+    id,
+    trayCode,
+    programName,
+    startTime,
+    endTime,
+    pressureUnit,
+    leakUnit,
+    actualPressure,
+    actualLeak,
+    testTime,
+    settingCycleTime,
+    dataPressure,
+    dataLeak,
+    status
+)
+SELECT
+    lower(hex(randomblob(4))) || '-' ||
+    lower(hex(randomblob(2))) || '-' ||
+    lower(hex(randomblob(2))) || '-' ||
+    lower(hex(randomblob(2))) || '-' ||
+    lower(hex(randomblob(6))),
+
+    'MAMXE-' || printf('%03d', x),
+
+    'PROGRAM_01',
+
+    datetime(
+        '2026-09-24 16:00:00',
+        '+' || ((x - 1) * 40) || ' seconds'
+    ),
+
+    datetime(
+        '2026-09-24 16:00:00',
+        '+' || (((x - 1) * 40) + 30) || ' seconds'
+    ),
+
+    'Pa',
+
+    'Pa/s',
+
+    400 + (abs(random()) % 91),
+
+    round(
+        10 + (abs(random()) % 1000) / 100.0,
+        2
+    ),
+
+    30,
+
+    30,
+
+    '[0,35,70,105,140,175,210,245,280,310,335,355,375,395,410,423,435,445,454,462,469,475,480,484,487,489,490,490,490,490]',
+
+    '[1.2,1.8,2.5,3.1,3.8,4.5,5.3,6.1,7.0,7.8,8.7,9.5,10.4,11.2,12.0,12.8,13.5,14.1,14.6,15.0,15.3,15.5,15.7,15.8,15.9,16.0,16.0,16.0,16.0,16.0]',
+
+    CASE
+        WHEN x % 10 = 0 THEN 'FAIL'
+        ELSE 'PASS'
+    END
+
+FROM cnt;</sql><current_tab id="0"/></tab_sql></sqlb_project>
