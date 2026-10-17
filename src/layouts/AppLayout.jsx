@@ -215,6 +215,7 @@ function AppLayout() {
             }`}
           >
             <HistoryPage
+              visible={activeTab === "history"}
               resetKey={historyResetKey}
               onViewDetail={handleViewHistoryDetail}
             />

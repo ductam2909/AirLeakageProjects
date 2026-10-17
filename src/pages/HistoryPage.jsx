@@ -31,7 +31,7 @@ import { getRequest } from "../services/request";
 
 const { RangePicker } = DatePicker;
 
-function HistoryPage({ resetKey, onViewDetail }) {
+function HistoryPage({ resetKey, onViewDetail, visible = true }) {
   const chartPeriods = useMemo(
     () => ["00-04h", "04-08h", "08-12h", "12-16h", "16-20h", "20-24h"],
     [],
@@ -86,6 +86,7 @@ function HistoryPage({ resetKey, onViewDetail }) {
   }, []);
 
   useEffect(() => {
+    if (!visible) return;
     let alive = true;
 
     async function loadData() {
@@ -140,9 +141,10 @@ function HistoryPage({ resetKey, onViewDetail }) {
     return () => {
       alive = false;
     };
-  }, [pagination.page, pagination.pageSize, statusFilter, dateRange]);
+  }, [pagination.page, pagination.pageSize, statusFilter, dateRange, visible]);
 
   useEffect(() => {
+    if (!visible) return;
     let alive = true;
 
     async function loadSummary() {
@@ -191,7 +193,7 @@ function HistoryPage({ resetKey, onViewDetail }) {
     return () => {
       alive = false;
     };
-  }, [statusFilter, dateRange]);
+  }, [statusFilter, dateRange, visible]);
 
   // Dữ liệu đã được filter + phân trang từ API
   const tableRows = useMemo(() => {

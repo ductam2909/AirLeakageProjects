@@ -120,7 +120,7 @@ function WebLayout() {
               isDashboard ? "is-inactive" : "is-active"
             }`}
           >
-            <HistoryWeb onViewDetail={handleViewDetail} />
+            <HistoryWeb onViewDetail={handleViewDetail} visible={!isDashboard} />
           </div>
         </div>
       </div>
