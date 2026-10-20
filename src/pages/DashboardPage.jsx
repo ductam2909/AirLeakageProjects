@@ -17,12 +17,14 @@ const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 const numeric = (value, fallback = 0) =>
   Number.isFinite(Number(value)) ? Number(value) : fallback;
 const MEASUREMENT_DURATION_SECONDS = 30;
+// Khoảng thời gian giữa các điểm trên đồ thị (giây), phải lớn hơn 0.
+const SAMPLE_INTERVAL_SECONDS = 0.1;
 const DEFAULT_X_TICK_COUNT = 4;
 
 const formatSeconds = (seconds) =>
-  Number.isInteger(seconds) ? seconds : Number(seconds.toFixed(1));
+  Number.isInteger(seconds) ? seconds : Number(seconds.toFixed(6));
 
-const buildSamplesFromArrays = (data) => {
+const buildSamplesFromArrays = (data, sampleInterval) => {
   const pressures = Array.isArray(data?.dataPressure) ? data.dataPressure : [];
   const leaks = Array.isArray(data?.dataLeak) ? data.dataLeak : [];
   const sampleCount = Math.max(pressures.length, leaks.length);
@@ -34,7 +36,7 @@ const buildSamplesFromArrays = (data) => {
     const leak = numeric(leaks[index], NaN);
 
     return {
-      time: index + 1,
+      time: Number(((index + 1) * sampleInterval).toFixed(6)),
       pressure,
       leak,
     };
@@ -432,7 +434,7 @@ function DashboardPage({
       : "Ổn định";
 
   const samples = useMemo(() => {
-    return buildSamplesFromArrays(measurement);
+    return buildSamplesFromArrays(measurement, SAMPLE_INTERVAL_SECONDS);
   }, [measurement]);
 
   const leakOutside = leak > threshold.leakMax;
