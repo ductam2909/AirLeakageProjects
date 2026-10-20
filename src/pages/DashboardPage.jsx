@@ -52,7 +52,7 @@ function TrendChart({
   progress,
   duration = MEASUREMENT_DURATION_SECONDS,
   x_TickCount = DEFAULT_X_TICK_COUNT,
-  yMax = 600,
+  yMax,
   y_TickCount,
 }) {
   const leak = field === "leak";
@@ -73,7 +73,7 @@ function TrendChart({
       value: Number(sample[field]),
     }));
   const lastChartPoint = chartData.at(-1);
-  const safeYMax = Math.max(1, numeric(yMax, 600));
+  const safeYMax = Math.max(1, numeric(yMax, numeric(max) * 1.12));
 
   const annotations = [
     ...(!leak
@@ -449,18 +449,17 @@ function DashboardPage({
           ? "Fail"
           : "Pass"
         : "Đang đo";
-  const maxMeasuredPressure = Math.max(
-    0,
-    pressure,
-    ...samples.map((sample) => numeric(sample.pressure, 0)),
-  );
+  // cấu hình khoản đo trục x
   const pressureChartMax = Math.max(
-    600,
-    Math.ceil((Math.max(maxMeasuredPressure, threshold.max) * 1.12) / 50) * 50,
+    1,
+    numeric(threshold.max) * 1.12,
+    numeric(pressure) * 1.12,
+    ...samples.map((sample) => numeric(sample.pressure) * 1.12),
   );
   const leakChartMax = Math.max(
-    30,
-    threshold.leakMax * 1.12,
+    1,
+    numeric(threshold.leakMax) * 1.12,
+    numeric(leak) * 1.12,
     ...samples.map((sample) => numeric(sample.leak) * 1.12),
   );
 

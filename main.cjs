@@ -129,14 +129,15 @@ function startPackagedBackend() {
 async function waitForUrl(url, retries = 150) {
   for (let attempt = 0; attempt < retries; attempt += 1) {
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, { signal: AbortSignal.timeout(2000) });
 
       if (response.ok) {
         return;
       }
     } catch {
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      // Retry local startup failures, including requests that time out.
     }
+    await new Promise((resolve) => setTimeout(resolve, 200));
   }
 
   throw new Error(`Server is not available at ${url}`);
@@ -188,7 +189,8 @@ function createWindow() {
 }
 
 function setupAutoUpdater() {
-  if (!app.isPackaged) return;
+  // Offline installations only check for updates when explicitly enabled.
+  if (!app.isPackaged || process.env.ELECTRON_ENABLE_UPDATES !== "1") return;
 
   if (process.env.ELECTRON_GITHUB_OWNER && process.env.ELECTRON_GITHUB_REPO) {
     autoUpdater.setFeedURL({

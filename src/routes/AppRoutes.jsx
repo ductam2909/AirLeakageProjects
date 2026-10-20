@@ -26,7 +26,7 @@ function AppRoutes() {
     )
   }
 
-  if (isWeb) {
+  if (!isWeb) {
     // Trên nền web: chỉ hiển thị trang lịch sử, không có dashboard
     return (
       <Routes>
